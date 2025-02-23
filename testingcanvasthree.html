@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smooth Falling Cubes Animation</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create cubes
+        const cubes = [];
+        const cubeCount = 100; // Number of cubes
+
+        for (let i = 0; i < cubeCount; i++) {
+            const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+            const material = new THREE.MeshBasicMaterial({ color: new THREE.Color(Math.random(), Math.random(), Math.random()) });
+            const cube = new THREE.Mesh(geometry, material);
+
+            // Randomize starting position
+            cube.position.x = (Math.random() - 0.5) * 2; // Random x position
+            cube.position.y = (Math.random() * 2) + 2; // Start above the view
+            cube.position.z = (Math.random() - 0.5) * 2; // Random z position
+
+            cubes.push(cube);
+            scene.add(cube);
+        }
+
+        // Position the camera
+        camera.position.z = 3;
+
+        // Animation function
+        function animate() {
+            requestAnimationFrame(animate);
+            cubes.forEach(cube => {
+                cube.position.y -= 0.01 + Math.random() * 0.02; // Move cubes downwards with random speed
+                cube.rotation.x += 0.01; // Rotate cube for a dynamic effect
+                cube.rotation.y += 0.01;
+
+                // Reset cube position
+                if (cube.position.y < -2) {
+                    cube.position.y = (Math.random() * 2) + 2; // Reset to top
+                    cube.position.x = (Math.random() - 0.5) * 2; // Random x position
+                }
+            });
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+
+        animate(); // Start the animation
+    </script>
+</body>
+</html>
